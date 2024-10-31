@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive Link Converter</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 90%;
+            background: linear-gradient(145deg, #ffffff, #f1f3f5);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(80% - 16px);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1), inset -3px -3px 5px rgba(255, 255, 255, 0.7);
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: calc(20% - 16px);
+            padding: 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .copy-button {
+            background-color: #28a745;
+            color: #ffffff;
+            font-weight: bold;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .copy-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .output {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .output p {
+            font-size: 0.9rem;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        .output input[type="text"] {
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            color: #555;
+            width: calc(100% - 16px);
+            cursor: pointer;
+            box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1), inset -3px -3px 5px rgba(255, 255, 255, 0.7);
+        }
+
+        .output img {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            input[type="text"], button {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .output p {
+                font-size: 0.8rem;
+            }
+
+            .output input[type="text"] {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Google Drive Link Converter</h2>
+        <input type="text" id="driveLink" placeholder="ใส่ลิงก์ Google Drive ที่นี่">
+        <button onclick="generateLink()">แปลงลิงก์</button>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const driveLink = document.getElementById("driveLink").value;
+            const regex = /\/file\/d\/(.*?)(\/|$)/;
+            const match = driveLink.match(regex);
+            
+            if (match && match[1]) {
+                const fileId = match[1];
+                const thumbnailLink = `https://drive.google.com/thumbnail?id=${fileId}`;
+                const directLink = `https://drive.google.com/uc?id=${fileId}`;
+
+                document.getElementById("output").innerHTML = `
+                    <p><strong>ลิงก์ตรงของรูป:</strong></p>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="directLink" value="${directLink}" readonly onclick="this.select()">
+                        <button class="copy-button" onclick="copyToClipboard('directLink')">Copy</button>
+                    </div>
+                    <p><strong>ลิงก์รูปขนาดย่อ:</strong></p>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="thumbnailLink" value="${thumbnailLink}" readonly onclick="this.select()">
+                        <button class="copy-button" onclick="copyToClipboard('thumbnailLink')">Copy</button>
+                    </div>
+                    <img src="${thumbnailLink}" alt="Preview Image">
+                `;
+            } else {
+                document.getElementById("output").innerHTML = "<p style='color:red;'>ลิงก์ไม่ถูกต้อง</p>";
+            }
+        }
+
+        function copyToClipboard(elementId) {
+            const copyText = document.getElementById(elementId);
+            copyText.select();
+            document.execCommand("copy");
+            alert("คัดลอกลิงก์แล้ว!");
+        }
+    </script>
+</body>
+</html>
